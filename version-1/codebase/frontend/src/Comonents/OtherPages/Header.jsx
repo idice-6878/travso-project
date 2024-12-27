@@ -27,7 +27,7 @@ import { getAllPosts } from "../../redux/slices/postSlice";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import dummyUserImage from "../../assets/user_image-removebg-preview.png";
 import { addToRecentSearch } from "../../redux/slices/searchSlice";
-
+const client_host = "http://localhost:3001/";
 
 const Header = () => {
   const [isSearchActive, setIsSearchActive] = useState(false);
@@ -42,7 +42,8 @@ const Header = () => {
   const [searchedKeyword, setSearchedKeyword] = useState(null);
   const [activeFilter, setActiveFilter] = useState("");
   // const [activeTab, setActiveTab] = useState("Home");
-  const [suggestionShow, setSuggestionShow] = useState([{ id: 1,name: "Reet sharma", img: girl },
+  const [suggestionShow, setSuggestionShow] = useState([
+    { id: 1, name: "Reet sharma", img: girl },
     {
       id: 2,
       name: "Madhulika",
@@ -63,11 +64,12 @@ const Header = () => {
       username: "@frontend",
       followers: "12k Followers",
       img: girl,
-    }]);
+    },
+  ]);
 
   //   useEffect(() => {
   //     const path = location.pathname;
-    
+
   //     // Define the mapping of paths to active tab names
   //     const tabMapping = {
   //       "/explorer": "Explorer",
@@ -75,7 +77,7 @@ const Header = () => {
   //       "/Message": "Message",
   //       "/isNotificationsOpen": "isNotificationsOpen",
   //     };
-    
+
   //     // Set active tab based on the current path or default to "Home"
   //     setActiveTab(tabMapping[path] || "Home");
   //  },[location]);
@@ -97,8 +99,6 @@ const Header = () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
-
-  
 
   const {
     user: userDetails,
@@ -125,7 +125,7 @@ const Header = () => {
       dispatch(getAllUsers());
     }
 
-    if(!allPosts) {
+    if (!allPosts) {
       dispatch(getAllPosts());
     }
   }, [dispatch]);
@@ -138,7 +138,7 @@ const Header = () => {
   ];
 
   const searchSuggestions = [
-    { id: 1,name: "Reet sharma", img: girl },
+    { id: 1, name: "Reet sharma", img: girl },
     {
       id: 2,
       name: "Madhulika",
@@ -208,7 +208,9 @@ const Header = () => {
       let searchPosts;
       if (searchedKeyword) {
         searchPosts = allPosts?.filter((item) =>
-          item?.description?.toLowerCase().includes(searchedKeyword?.toLowerCase())
+          item?.description
+            ?.toLowerCase()
+            .includes(searchedKeyword?.toLowerCase())
         );
       } else {
         searchPosts = allPosts;
@@ -243,40 +245,28 @@ const Header = () => {
       // console.log("===allUsers===", allUsers);
       const showSearchUser = allUsers?.filter(
         (item) =>
-          item?.user_name
-            ?.toLowerCase()
-            .includes(value?.toLowerCase()) ||
-          item?.full_name
-            ?.toLowerCase()
-            .includes(value?.toLowerCase())
-      )
+          item?.user_name?.toLowerCase().includes(value?.toLowerCase()) ||
+          item?.full_name?.toLowerCase().includes(value?.toLowerCase())
+      );
       setSearchResult(showSearchUser);
-    } 
-    else if (searchAction === "Buddies" && value !== "") {
+    } else if (searchAction === "Buddies" && value !== "") {
       const searchBuddies = userBuddies?.filter(
         (item) =>
-          item?.user_name
-            ?.toLowerCase()
-            .includes(value?.toLowerCase()) ||
-          item?.full_name
-            ?.toLowerCase()
-            .includes(value?.toLowerCase())
+          item?.user_name?.toLowerCase().includes(value?.toLowerCase()) ||
+          item?.full_name?.toLowerCase().includes(value?.toLowerCase())
       );
       setSearchResult(searchBuddies);
-    } 
-    else if (searchAction === "Hashtags" && value !== "") {
+    } else if (searchAction === "Hashtags" && value !== "") {
       const searchHashTags = allTags?.filter((item) =>
         item?.name?.toLowerCase().includes(value?.toLowerCase())
       );
       setSearchResult(searchHashTags);
-    } 
-    else if (searchAction === "Post" && value !== "") {
+    } else if (searchAction === "Post" && value !== "") {
       const searchPosts = allPosts?.filter((item) =>
         item?.description?.toLowerCase().includes(value?.toLowerCase())
       );
       setSearchResult(searchPosts);
-    } 
-    else if (value === "") {
+    } else if (value === "") {
       setSearchResult([]);
       setSearchedKeyword(null);
       setSearchAction(null);
@@ -284,30 +274,31 @@ const Header = () => {
     }
   };
 
-  const sendToSearch = async(searchedId) => {
+  const sendToSearch = async (searchedId) => {
     try {
-       const addRecentSearch = await dispatch(addToRecentSearch(searchedId)).unwrap();
+      const addRecentSearch = await dispatch(
+        addToRecentSearch(searchedId)
+      ).unwrap();
       //  console.log("=======addRecentSearch=====>", addRecentSearch);
     } catch (error) {
       console.log("error on add recent search", error);
     }
-  }
+  };
 
-  const logOut = async() => {
+  const logOut = async () => {
     try {
       const logOutResult = await dispatch(logoutUser()).unwrap();
-      if(logOutResult) {
+      if (logOutResult) {
         // console.log("==logOutResult====>", logOutResult);
         await dispatch(resetAuthState());
-        navigate('/login');
+        navigate("/login");
       }
     } catch (error) {
       console.log("error in logout", error);
     }
-  }
+  };
 
-
-  const removeFromSearchSuggestion = async(removeId) => {
+  const removeFromSearchSuggestion = async (removeId) => {
     try {
       console.log("===removeId====", removeId);
       setSuggestionShow((prevResults) =>
@@ -316,7 +307,7 @@ const Header = () => {
     } catch (error) {
       console.log("error in logout", error);
     }
-  }
+  };
 
   return (
     <>
@@ -396,158 +387,157 @@ const Header = () => {
                   </div>
 
                   <div className="flex-1 h-[400px] overflow-auto scrollbar-hidden">
-
-                  {!searchAction && searchedKeyword && (
-                    <>
-                      {seacrhResult.map((suggestion, index) => (
-                        <li
-                          key={suggestion.id}
-                          className="flex items-center justify-between py-2"
-                          
-                        >
-                          <div className="flex items-center gap-3 cursor-pointer" onClick={() => sendToSearch(suggestion.id)}>
-                            <img
-                              src={suggestion.profile_image || dummyUserImage}
-                              alt={suggestion.user_name}
-                              className="w-10 h-10 rounded-full"
-                            />
-                            <div>
-                              <p className="font-medium text-left text-[#415365]">
-                                {suggestion.full_name}
-                              </p>
-                              <div className="flex justify-between text-left gap-5">
-                                <p className="text-sm text-gray-500">
-                                  {suggestion.user_name || 'Test'}
+                    {!searchAction && searchedKeyword && (
+                      <>
+                        {seacrhResult.map((suggestion, index) => (
+                          <li
+                            key={suggestion.id}
+                            className="flex items-center justify-between py-2"
+                          >
+                            <div
+                              className="flex items-center gap-3 cursor-pointer"
+                              onClick={() => sendToSearch(suggestion.id)}
+                            >
+                              <img
+                                src={suggestion.profile_image || dummyUserImage}
+                                alt={suggestion.user_name}
+                                className="w-10 h-10 rounded-full"
+                              />
+                              <div>
+                                <p className="font-medium text-left text-[#415365]">
+                                  {suggestion.full_name}
                                 </p>
-                                <p className="text-sm text-gray-400">
-                                  {suggestion.total_followers}
-                                </p>
+                                <div className="flex justify-between text-left gap-5">
+                                  <p className="text-sm text-gray-500">
+                                    {suggestion.user_name || "Test"}
+                                  </p>
+                                  <p className="text-sm text-gray-400">
+                                    {suggestion.total_followers}
+                                  </p>
+                                </div>
                               </div>
                             </div>
-                          </div>
-                          <button
-                            className="text-[#000000] font-medium"
-                            onClick={() => removeFromSeacrh(suggestion.id)}
-                          >
-                            X
-                          </button>
-                        </li>
-                      ))}
-                    </>
-                  )}
+                            <button
+                              className="text-[#000000] font-medium"
+                              onClick={() => removeFromSeacrh(suggestion.id)}
+                            >
+                              X
+                            </button>
+                          </li>
+                        ))}
+                      </>
+                    )}
 
-
-                  {searchAction === "Buddies" && (
-                    <>
-                      { seacrhResult ? seacrhResult.map((suggestion, index) => (
-                        <li
-                          key={index}
-                          className="flex items-center justify-between py-2"
-                        >
-                          <div className="flex items-center gap-3">
-                            <img
-                              src={suggestion.profile_image || dummyUserImage}
-                              alt={suggestion.user_name}
-                              className="w-10 h-10 rounded-full"
-                            />
-                            <div>
-                              <p className="font-medium text-left text-[#415365]">
-                                {suggestion.full_name}
-                              </p>
-                              <div className="flex justify-between text-left gap-5">
-                                <p className="text-sm text-gray-500">
-                                  {suggestion.user_name}
-                                </p>
-                                {/* <p className="text-sm text-gray-400">
+                    {searchAction === "Buddies" && (
+                      <>
+                        {seacrhResult ? (
+                          seacrhResult.map((suggestion, index) => (
+                            <li
+                              key={index}
+                              className="flex items-center justify-between py-2"
+                            >
+                              <div className="flex items-center gap-3">
+                                <img
+                                  src={
+                                    suggestion.profile_image || dummyUserImage
+                                  }
+                                  alt={suggestion.user_name}
+                                  className="w-10 h-10 rounded-full"
+                                />
+                                <div>
+                                  <p className="font-medium text-left text-[#415365]">
+                                    {suggestion.full_name}
+                                  </p>
+                                  <div className="flex justify-between text-left gap-5">
+                                    <p className="text-sm text-gray-500">
+                                      {suggestion.user_name}
+                                    </p>
+                                    {/* <p className="text-sm text-gray-400">
                                   {suggestion.followers}
                                 </p> */}
+                                  </div>
+                                </div>
                               </div>
-                            </div>
-                          </div>
-                          <button
-                            className="text-[#000000] font-medium"
-                            onClick={() => removeFromSeacrh(suggestion.id)}
-                          >
-                            X
-                          </button>
-                        </li>
-                      ))
-                    : 
-                    (
-                      <>
-                       <p>No Data</p>
+                              <button
+                                className="text-[#000000] font-medium"
+                                onClick={() => removeFromSeacrh(suggestion.id)}
+                              >
+                                X
+                              </button>
+                            </li>
+                          ))
+                        ) : (
+                          <>
+                            <p>No Data</p>
+                          </>
+                        )}
                       </>
-                    )
-                    }
-                    </>
-                  )}
-                  
+                    )}
 
-                  {searchAction === "Hashtags" && (
-                    <>
-                      { seacrhResult ? seacrhResult.map((suggestion, index) => (
-                        <li
-                          key={index}
-                          className="flex items-center justify-between py-2"
-                        >
-                          <div className="flex items-center gap-3">
-                            <div>
-                              <p className="font-medium text-left text-[#415365]">
-                                {suggestion.name}
-                              </p>
-                              <div className="flex justify-between text-left gap-5"></div>
-                            </div>
-                          </div>
-                          <button
-                            className="text-[#000000] font-medium"
-                            onClick={() => removeFromSeacrh(suggestion.id)}
-                          >
-                            X
-                          </button>
-                        </li>
-                      ))
-                     : (
+                    {searchAction === "Hashtags" && (
                       <>
-                      <p>No Data</p>
+                        {seacrhResult ? (
+                          seacrhResult.map((suggestion, index) => (
+                            <li
+                              key={index}
+                              className="flex items-center justify-between py-2"
+                            >
+                              <div className="flex items-center gap-3">
+                                <div>
+                                  <p className="font-medium text-left text-[#415365]">
+                                    {suggestion.name}
+                                  </p>
+                                  <div className="flex justify-between text-left gap-5"></div>
+                                </div>
+                              </div>
+                              <button
+                                className="text-[#000000] font-medium"
+                                onClick={() => removeFromSeacrh(suggestion.id)}
+                              >
+                                X
+                              </button>
+                            </li>
+                          ))
+                        ) : (
+                          <>
+                            <p>No Data</p>
+                          </>
+                        )}
                       </>
-                     )
-                    }
-                    </>
-                  )}
+                    )}
 
-                  {searchAction === "Post" && (
-                    <>
-                      { seacrhResult ? seacrhResult.map((suggestion, index) => (
-                        <li
-                          key={index}
-                          className="flex items-center justify-between py-2"
-                        >
-                          <div className="flex items-center gap-3">
-                            <div>
-                              <p className="font-medium text-left text-[#415365]">
-                                {suggestion.description}
-                              </p>
-                              <div className="flex justify-between text-left gap-5"></div>
-                            </div>
-                          </div>
-                          <button
-                            className="text-[#000000] font-medium"
-                            onClick={() => removeFromSeacrh(suggestion.id)}
-                          >
-                            X
-                          </button>
-                        </li>
-                      ))
-                     :
-                     (
+                    {searchAction === "Post" && (
                       <>
-                       <p>No Data</p>
+                        {seacrhResult ? (
+                          seacrhResult.map((suggestion, index) => (
+                            <li
+                              key={index}
+                              className="flex items-center justify-between py-2"
+                            >
+                              <div className="flex items-center gap-3">
+                                <div>
+                                  <p className="font-medium text-left text-[#415365]">
+                                    {suggestion.description}
+                                  </p>
+                                  <div className="flex justify-between text-left gap-5"></div>
+                                </div>
+                              </div>
+                              <button
+                                className="text-[#000000] font-medium"
+                                onClick={() => removeFromSeacrh(suggestion.id)}
+                              >
+                                X
+                              </button>
+                            </li>
+                          ))
+                        ) : (
+                          <>
+                            <p>No Data</p>
+                          </>
+                        )}
                       </>
-                     )
-                    }
-                    </>
-                  )}
-                 
+                    )}
+
                     {!searchAction && !searchedKeyword && (
                       <>
                         {/* Recent Views */}
@@ -614,7 +604,9 @@ const Header = () => {
                                 </div>
                                 <button
                                   className="text-[#000000] font-medium"
-                                  onClick={() => removeFromSearchSuggestion(suggestion.id)}
+                                  onClick={() =>
+                                    removeFromSearchSuggestion(suggestion.id)
+                                  }
                                 >
                                   X
                                 </button>
@@ -624,15 +616,16 @@ const Header = () => {
                         </div>
                       </>
                     )}
-
-</div>
+                  </div>
                 </div>
               )}
             </div>
 
             {/* Navigation Links */}
             <nav className="flex items-center justify-between ml-5 mr-5 text-gray-500 gap-6 md:w-[400px]">
-              <Link to='/community'><NavItem icon={HomeIcon} label="Home" /></Link>
+              <Link to="/community">
+                <NavItem icon={HomeIcon} label="Home" />
+              </Link>
               {/* <NavItem icon={HomeIcon} label="Home" /> */}
               <NavItem icon={ExploreIcon} label="Explore" />
               <NavItem icon={PersonIcon} label="Buddies Request" />
@@ -640,7 +633,14 @@ const Header = () => {
 
             {/* Icons and Profile Section */}
             <div className="flex items-center">
-              <Link to='/chat'>
+              <Link
+                to="#"
+                onClick={(e) => {
+                  e.preventDefault(); // Prevent React Router navigation
+                  window.open(client_host, "_blank", "noopener,noreferrer");
+                }}
+              >
+                {/* <Link to='/chat'> */}
                 <IconButton
                   icon={
                     <FontAwesomeIcon
@@ -917,15 +917,16 @@ const Header = () => {
                     <div className="space-y-2">
                       <button className="w-full text-left text-gray-700 hover:bg-gray-100 p-2 rounded flex items-center ">
                         <Person className="mr-2 navitemDatas" />
-                        <Link to='/profile'>
-                          Profile
-                        </Link>
+                        <Link to="/profile">Profile</Link>
                       </button>
                       <button className="w-full text-left text-gray-700 hover:bg-gray-100 p-2 rounded flex items-center">
                         <Settings className="mr-2 navitemDatas" />
                         Settings
                       </button>
-                      <button className="w-full text-left text-gray-700 hover:bg-gray-100 p-2 rounded flex items-center" onClick={logOut}>
+                      <button
+                        className="w-full text-left text-gray-700 hover:bg-gray-100 p-2 rounded flex items-center"
+                        onClick={logOut}
+                      >
                         <ExitToApp className="mr-2 navitemDatas" />
                         Logout
                       </button>
@@ -980,13 +981,15 @@ const ProfileMenu = ({ userDetails }) => {
         alt="Profile"
         className="w-8 h-8 rounded-full mr-2"
       />
-      
+
       <div className="flex flex-col">
-      <span className="block font-medium text-gray-700 mr-5">
-        {userDetails?.user_name}
-      </span>
+        <span className="block font-medium text-gray-700 mr-5">
+          {userDetails?.user_name}
+        </span>
         <p className="font-inter font-medium text-[12px] text-[#667877] text-left">
-          {userDetails?.email?.length > 12 ? `${userDetails?.email.slice(0, 12)}...` : userDetails?.email}
+          {userDetails?.email?.length > 12
+            ? `${userDetails?.email.slice(0, 12)}...`
+            : userDetails?.email}
         </p>
       </div>
       <KeyboardArrowDownIcon className="h-4 w-4 text-gray-500" />

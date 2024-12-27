@@ -310,6 +310,7 @@ const handleSubmit = async(e) => {
         handleFlashMessage(response.error, 'error');
       } else {
         localStorage.setItem("token", response.token);
+       
         handleFlashMessage(response.message, 'success');
         if(response.is_follow_selected) {
           navigate("/profile");
